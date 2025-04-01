@@ -8,5 +8,5 @@ from .reviews_service.reviews import reviews
 app = FastAPI()
 
 app.include_router(catalog)
-# app.include_router(orders)
-# app.include_router(reviews)
+app.include_router(orders)
+app.include_router(reviews)
