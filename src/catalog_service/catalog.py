@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Header, HTTPException
+from fastapi import APIRouter, HTTPException
 
 from src.catalog_service.models import Categories, Products
 
@@ -62,3 +62,43 @@ async def delete_product(id: int):
         del fake_products_db[id]
         return None
     raise HTTPException(status_code=404, detail="Products with given id not found")
+
+
+@catalog.get("/categories", response_model=List[Categories])
+async def get_categories():
+    return fake_categories_db
+
+
+@catalog.get("/categories/{category_id}", response_model=Categories)
+async def get_category(category_id: int):
+    category = None
+    for category_ in fake_categories_db:
+        if category_["id"] == category_id:
+            category = category_
+    return category
+
+
+@catalog.post("/categories", status_code=201)
+async def add_category(payload: Categories):
+    category = payload.model_dump()
+    fake_categories_db.append(category)
+    return {"id_": category["id"]}
+
+
+@catalog.put("/categories/{category_id}")
+async def update_category(id: int, payload: Categories):
+    category = payload.model_dump()
+    categories_length = len(fake_categories_db)
+    if 0 <= id <= categories_length:
+        fake_categories_db[id] = category
+        return None
+    raise HTTPException(status_code=404, detail="Category with given id not found")
+
+
+@catalog.delete("/categories/{category_id}")
+async def delete_category(id: int):
+    categories_length = len(fake_categories_db)
+    if 0 <= id <= categories_length:
+        del fake_categories_db[id]
+        return None
+    raise HTTPException(status_code=404, detail="Category with given id not found")
