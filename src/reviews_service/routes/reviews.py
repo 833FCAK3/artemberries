@@ -46,7 +46,7 @@ async def delete_review(product_id: int):
     reviews_length = len(fake_reviews_db)
     if 0 <= product_id <= reviews_length:
         for review in fake_reviews_db[:]:
-            if review['product_id'] == product_id:
+            if review["product_id"] == product_id:
                 fake_reviews_db.remove(review)
         return None
     raise HTTPException(status_code=404, detail="Reviews with given id not found")
