@@ -14,6 +14,7 @@ fake_orders_db = [
         "user_id": 1,
         "status": OrderStatusType.CREATED,
         "total_price": 500,
+        "tracking_number": "123456789",
         "created_at": datetime.now(),
         "updated_at": datetime.now(),
     }

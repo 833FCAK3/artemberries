@@ -17,6 +17,7 @@ class OrdersDTO(BaseModel):
     user_id: int
     status: str = OrderStatusType.CREATED
     total_price: float
+    tracking_number: str | None = None
     created_at: datetime = datetime.now()
     updated_at: datetime = datetime.now()
 
