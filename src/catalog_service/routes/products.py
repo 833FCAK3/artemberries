@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from src.catalog_service.models import ProductsDTO
+from models import ProductsDTO
 
 
 fake_products_db = [

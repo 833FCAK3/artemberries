@@ -1,0 +1,135 @@
+
+services:
+  catalog_service:
+    container_name: ab_catalog_service
+    build:
+      context: .
+      dockerfile: ./src/catalog_service/Dockerfile
+    image: catalog_service
+    restart: always
+    depends_on:
+      - postgres
+      - redis
+      - kafka
+    env_file:
+      - .env
+    environment:
+      WAIT_HOSTS: postgres:5432, redis:6379, kafka:9092
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${CATALOG_PORT:-8001}" 
+    ports:
+      - ${CATALOG_PORT:-8001}:8001
+
+  orders_service:
+    container_name: ab_orders_service
+    build:
+      context: .
+      dockerfile: ./src/orders_service/Dockerfile
+    image: orders_service
+    restart: always
+    depends_on:
+      - postgres
+      - kafka
+      - catalog_service
+    env_file:
+      - .env
+    environment:
+      WAIT_HOSTS: postgres:5432, kafka:9092, catalog_service:${CATALOG_PORT}
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${ORDERS_PORT:-8002}" 
+    ports:
+      - ${ORDERS_PORT:-8002}:8002
+
+  reviews_service:
+    container_name: ab_reviews_service
+    build:
+      context: .
+      dockerfile: ./src/reviews_service/Dockerfile
+    image: reviews_service
+    restart: always
+    depends_on:
+      - mongo
+      - kafka
+    env_file:
+      - .env
+    environment:
+      WAIT_HOSTS: postgres:5432, kafka:9092
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${REVIEWS_PORT:-8003}" 
+    ports:
+      - ${REVIEWS_PORT:-8003}:8003
+
+  postgres:
+    container_name: ab_postgres
+    build:
+      context: .
+      dockerfile_inline: FROM postgres:17.4-alpine3.21
+    image: ab_postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    ports:
+      - ${POSTGRES_PORT:-5432}:5432
+
+  mongo:
+    container_name: ab_mongo
+    build:
+      context: .
+      dockerfile_inline: FROM mongo:8.0.6
+    image: ab_mongo
+    restart: always
+    volumes:
+      - mongo_data:/data/db
+    env_file:
+      - .env
+    ports:
+      - ${MONGO_PORT:-27017}:27017
+
+  redis:
+    container_name: ab_redis
+    build:
+      context: .
+      dockerfile_inline: FROM redis:8.0-M04-alpine
+    image: ab_redis
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${redis_PORT:-6379}:6379
+
+  kafka:
+    container_name: ab_kafka
+    build:
+      context: .
+      dockerfile_inline: FROM confluentinc/cp-kafka:7.9.0
+    image: ab_kafka
+    restart: always
+    env_file:
+      - .env
+    # command: bash -c "printenv KAFKA_CLUSTER_ID"
+    ports:
+      - ${KAFKA_PORT_:-9092}:9092
+
+  nginx:
+    container_name: ab_nginx
+    build:
+      context: .
+      dockerfile_inline: FROM nginx:alpine3.21-perl
+    image: ab_nginx
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - ${NGINX_PORT:-80}:80
+
+#   celery:
+#   elasticsearch:
+#   logstash:
+#   kibana:
+#   prometheus:
+#   grafana:
+#   auth:
+
+
+volumes:
+  postgres_data:
+  mongo_data:
