@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from routes.categories import category
-from routes.products import product
+from catalog_service.routes.categories import category
+from catalog_service.routes.products import product
 
 
 app = FastAPI()

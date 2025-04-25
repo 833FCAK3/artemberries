@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from routes.reviews import reviews
+from reviews_service.routes.reviews import reviews
 
 
 app = FastAPI()

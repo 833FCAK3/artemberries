@@ -5,7 +5,7 @@ from typing import List
 import httpx
 from fastapi import APIRouter, HTTPException
 
-from models import OrderItemsDTO, OrdersDTO, OrderStatusType
+from orders_service.models import OrderItemsDTO, OrdersDTO, OrderStatusType
 
 
 fake_orders_db = [

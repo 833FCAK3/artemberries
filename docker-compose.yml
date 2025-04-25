@@ -14,8 +14,9 @@ services:
     env_file:
       - .env
     environment:
-      WAIT_HOSTS: postgres:5432, redis:6379, kafka:9092
-    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${CATALOG_PORT:-8001}" 
+      WAIT_HOSTS: postgres:5432, redis:6379
+      # , kafka:9092
+    command: bash -c "uvicorn catalog_service.main:app --host 0.0.0.0 --port ${CATALOG_PORT:-8001}" 
     ports:
       - ${CATALOG_PORT:-8001}:8001
 
@@ -33,8 +34,9 @@ services:
     env_file:
       - .env
     environment:
-      WAIT_HOSTS: postgres:5432, kafka:9092, catalog_service:${CATALOG_PORT}
-    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${ORDERS_PORT:-8002}" 
+      WAIT_HOSTS: postgres:5432, catalog_service:${CATALOG_PORT}
+      # , kafka:9092
+    command: bash -c "uvicorn orders_service.main:app --host 0.0.0.0 --port ${ORDERS_PORT:-8002}" 
     ports:
       - ${ORDERS_PORT:-8002}:8002
 
@@ -51,8 +53,9 @@ services:
     env_file:
       - .env
     environment:
-      WAIT_HOSTS: postgres:5432, kafka:9092
-    command: bash -c "uvicorn main:app --host 0.0.0.0 --port ${REVIEWS_PORT:-8003}" 
+      WAIT_HOSTS: postgres:5432
+      # , kafka:9092
+    command: bash -c "uvicorn reviews_service.main:app --host 0.0.0.0 --port ${REVIEWS_PORT:-8003}" 
     ports:
       - ${REVIEWS_PORT:-8003}:8003
 

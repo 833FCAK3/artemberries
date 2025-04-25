@@ -17,8 +17,8 @@ COPY pyproject.toml /src/reviews_service/pyproject.toml
 
 RUN mkdir -p /src/reviews_service/
 RUN cd /src/reviews_service/ && poetry install
-WORKDIR /src/reviews_service/
-COPY src/reviews_service/ /src/reviews_service/
+COPY src/ /src/
+WORKDIR /src/
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.11.0/wait /wait
 RUN chmod +x /wait
