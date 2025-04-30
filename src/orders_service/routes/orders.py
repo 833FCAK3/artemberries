@@ -5,7 +5,7 @@ from typing import List
 import httpx
 from fastapi import APIRouter, HTTPException
 
-from src.orders_service.models import OrderItemsDTO, OrdersDTO, OrderStatusType
+from orders_service.models import OrderItemsDTO, OrdersDTO, OrderStatusType
 
 
 fake_orders_db = [
@@ -90,7 +90,7 @@ async def delete_order(order_id: int):
 
 async def get_current_price(order_items: dict):
     async with httpx.AsyncClient() as client:
-        response = await client.get(f"http://localhost:8000/products/{order_items['product_id']}")
+        response = await client.get(f"http://catalog_service:8001/products/{order_items['product_id']}")
         if response.status_code == 404:
             raise HTTPException(status_code=404, detail="Product not found")
         elif response.status_code != 200:

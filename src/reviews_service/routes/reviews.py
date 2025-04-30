@@ -3,7 +3,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from src.reviews_service.models import ReviewsDTO
+from reviews_service.models import ReviewsDTO
 
 
 fake_reviews_db = [
